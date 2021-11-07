@@ -55,7 +55,7 @@ curl -s -H 'Authorization: Bearer $VAULT_TOKEN' $VAULT_URL/v1/$SECRET_BUCKET_NAM
 ```
 
 ### References
-- [Documentação oficial](https://www.vaultproject.io/docs)
-- [Documentação oficial - API] (https://www.vaultproject.io/api-docs)
-- [Recomendações para subida em produção com Docker](https://learn.hashicorp.com/tutorials/vault/production-hardening?in=vault/day-one-raft)
-- [Recomendações para subida em produção com Openshift](https://www.vaultproject.io/docs/platform/k8s/helm/openshift)
+- [Official Doc](https://www.vaultproject.io/docs)
+- [Official Doc - API] (https://www.vaultproject.io/api-docs)
+- [Production recommendation for Docker](https://learn.hashicorp.com/tutorials/vault/production-hardening?in=vault/day-one-raft)
+- [Production recommendation for Openshift](https://www.vaultproject.io/docs/platform/k8s/helm/openshift)
