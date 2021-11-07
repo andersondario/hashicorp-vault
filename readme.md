@@ -1,60 +1,60 @@
 # Hashi Vault
 
-### Descrição
-Esse projeto contém os arquivos necessários para a construção de um servidor Hashi Vault.
+### Description
+This project contains the necessary files to run a single Hashicorp Vault server for non-production purpouses.
 
-### Configuração
-Os detalhes de configuração do servidor devem ser definidos no arquivo _vault/config/vault-config.json_
+### Configuration
+The configuration details of the server are defined on the file _vault/config/vault-config.json_
 
-### Destravando o servidor
-Sempre que o servidor for iniciado, vai ser necessário destravar ele com um conjunto de chaves. No primeiro login é necessário definir em quantas porções a chave de destravamento será quebrada e quantas porções dele serão exigidas para o destravamento. Após destravar, basta usar o token master para logar na aplicação.
+### Unlock the server
+Always when the server goes up, it will be necessary unlock it with a set of keys. In the first login is need to define how many unlock keys will be generated for unlock the server. After unlock the server, login with the master token.
 
 ### API
-O servidor possui uma API no qual é possível interagir. Abaixo é demonstrado alguns exemplos de uso.
-1. Caso esteja utilizando user/password, o login é feito da seguinte forma:
+The server has an API which is possible to interate. Look on the examples below:
+1. If you're using user/password authentication:
 ```shell
 curl -X POST \ 
     -H "Content-Type: application/json" \ 
     -d '{ "password": $USER_PASS }' $VAULT_URL/v1/auth/userpass/login/$USER_NAME
 ```
 
-2. Caso queira fornecer credenciais para Apps, é indicado o uso da autenticação [Approle](https://learn.hashicorp.com/tutorials/vault/approle). Para isso é necessário:<br/>
-a) Criação de uma role
+2. If you want to give credentials for Apps, is indicated to use authentication by [Approle](https://learn.hashicorp.com/tutorials/vault/approle). For this, it is necessary:<br/>
+a) Create a role
 ```shell
 curl -X POST \
     -H 'Authorization: Bearer $VAULT_TOKEN' \
     -H "Content-Type: application/json" \ 
     -d '{ "token_ttl": "10m", "token_policies": ["$POLICY_NAME"] }' $VAULT_URL/v1/auth/approle/role/$ROLE_NAME 
 ```
-b) Ler o role_id da role criada acima
+b) Read the the role_id 
 ```shell
 curl -s \ 
     -H 'Authorization: Bearer $VAULT_TOKEN' $VAULT_URL/v1/auth/approle/role/$ROLE_NAME/role-id
 ```
-c) Criar um secret_id para a role acima
+c) Create a secret_id for the role
 ```shell
 curl -X POST \ 
     -H 'Authorization: Bearer $VAULT_TOKEN' $VAULT_URL/v1/auth/approle/role/$ROLE_NAME/secret-id
 ```
-d) Realizar login
+d) Do the login
 ```shell
 curl -X POST \
     -H "Content-Type: application/json" \ 
     -d '{ "role_id": $ROLE_ID, "secret_id": $SECRET_ID }' $VAULT_URL/v1/auth/approle/login
 ```
 
-3. Obter chaves armazenadas em um secret de tipo kv (key-value) versão 1.
+3. Get the keys from a Vault of kv type (key-value) version 1.
 ```shell
 curl -s -H 'Authorization: Bearer $VAULT_TOKEN' $VAULT_URL/v1/$SECRET_BUCKET_NAME/$SECRET_NAME 
 ```
 
-A requisição acima retorna todos as keys e values, junto com alguns metadados. Para pegar um value específico, precisamos utilizar um processador de JSON (jq por exemplo), conforme será mostrado a seguir
+The request above will get all key/values from the secret. You can extract only the necessary for you with the jq, like that:
 
 ```shell
 curl -s -H 'Authorization: Bearer $VAULT_TOKEN' $VAULT_URL/v1/$SECRET_BUCKET_NAME/$SECRET_NAME | jq -r ".data.$KEY_NAME"
 ```
 
-### Links úteis
+### References
 - [Documentação oficial](https://www.vaultproject.io/docs)
 - [Documentação oficial - API] (https://www.vaultproject.io/api-docs)
 - [Recomendações para subida em produção com Docker](https://learn.hashicorp.com/tutorials/vault/production-hardening?in=vault/day-one-raft)
